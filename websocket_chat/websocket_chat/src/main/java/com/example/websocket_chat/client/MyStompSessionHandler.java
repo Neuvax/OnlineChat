@@ -10,19 +10,24 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import com.example.websocket_chat.Message;
 
 public class MyStompSessionHandler extends StompSessionHandlerAdapter {
+    private String username;
+
+    public MyStompSessionHandler(String username) {
+        this.username = username;
+    }
 
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-        System.out.println("New session established: " + session.getSessionId());
+        System.out.println("Connected to STOMP broker as: " + username);
 
         session.subscribe("/topic/messages", new StompFrameHandler() {
-            
+
             @Override
             public Type getPayloadType(StompHeaders headers) {
                 return Message.class;
             }
 
-            @Override 
+            @Override
             public void handleFrame(StompHeaders headers, Object payload) {
                 try {
                     if (payload instanceof Message) {
@@ -36,11 +41,12 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
                 }
             }
         });
+        System.out.println("Subscribed to /topic/messages");
     }
 
     @Override
     public void handleTransportError(StompSession session, Throwable exception) {
         exception.printStackTrace();
     }
-    
+
 }
