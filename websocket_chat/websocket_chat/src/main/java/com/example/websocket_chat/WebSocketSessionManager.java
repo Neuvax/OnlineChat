@@ -17,4 +17,17 @@ public class WebSocketSessionManager {
         this.messagingTemplate = messagingTemplate;
     }
 
+    public void addUser(String username) {
+        activeUsernames.add(username);
+    }
+
+    public void removeUser(String username) {
+        activeUsernames.remove(username);
+    }
+
+    public void broadcastActiveUsernames() {
+        messagingTemplate.convertAndSend("topic/users/", activeUsernames);
+        System.out.println("Broadcasting active usernames to /topic/users: " + activeUsernames);
+    }
+
 }
